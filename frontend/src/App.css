@@ -1,0 +1,49 @@
+.mainContainer {
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 64px;
+  text-align: center;
+}
+
+.dataContainer {
+  max-width: 600px;
+}
+
+.waveContainer {
+  max-width: 600px;
+  padding-top: 24px;
+}
+
+.twitterContainer {
+  max-width: 600px;
+  padding-top: 124px;
+}
+
+.header {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.bio {
+  text-align: center;
+  color: gray;
+  margin-top: 16px;
+}
+
+.waveButton {
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  font-size: 1rem;
+  border-radius: 5px;
+  
+}
+
+.congrats{
+  text-align: center;
+  color:blueviolet;
+  font-size: 30px;
+  font-weight: 600;
+}
