@@ -7,6 +7,7 @@ import moment from 'moment';
 export default function App() {
   const [currAccount, setCurrentAccount] = React.useState("")
   const [loading, setLoading] = React.useState(true);
+  const [waving, setWaving] = React.useState(false);
   const [waves, setAllWaves] = React.useState([])
   const contractAddress = "0x70aEE8FB44Cb302fb7C4F8418b6336B50c92a9D8"
   const contractABI = abi.abi
@@ -81,6 +82,7 @@ export default function App() {
 
           });
         }
+        wavesCleaned = wavesCleaned.reverse()
 
 
         /*
@@ -117,23 +119,32 @@ export default function App() {
   }
 
   const wave = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner()
-    const waveportalContract = new ethers.Contract(contractAddress, contractABI, signer);
+    setWaving(true)
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner()
+      const waveportalContract = new ethers.Contract(contractAddress, contractABI, signer);
+  
+      let count = await waveportalContract.getTotalWaves()
+      console.log("Retrieved total waves", count.toNumber())
+  
+      const waveTxn = await waveportalContract.wave()
+      console.log("Mining...", waveTxn.hash)
+      await waveTxn.wait()
+      console.log("Mined -- ", waveTxn.hash)
+  
+      count = await waveportalContract.getTotalWaves()
+      console.log("Retrieved total wave count...", count.toNumber())
+      setCurrCount(count.toNumber())
+      console.log(currCount)
+      window.location.reload();
+      setWaving(false)
+    } catch (error) {
+      console.log(error);
+      setWaving(false)
 
-    let count = await waveportalContract.getTotalWaves()
-    console.log("Retrieved total waves", count.toNumber())
+    } 
 
-    const waveTxn = await waveportalContract.wave()
-    console.log("Mining...", waveTxn.hash)
-    await waveTxn.wait()
-    console.log("Mined -- ", waveTxn.hash)
-
-    count = await waveportalContract.getTotalWaves()
-    console.log("Retrieved total wave count...", count.toNumber())
-    setCurrCount(count.toNumber())
-    console.log(currCount)
-    window.location.reload();
   }
 
   const initCount = async () => {
@@ -171,8 +182,8 @@ export default function App() {
         <div className="bio">
           Already {currCount || "(?)"} people waved!
         </div>
-        {currAccount ? <button className="waveButton" onClick={wave}>
-          Wave at Me
+        {currAccount ? <button disabled={waving} className="waveButton" onClick={wave}>
+         {waving ? "Waving ..." : "Wave at Me" } 
         </button> : null}
         {currAccount ? null : (
           <button className="wavebutton" onClick={connectWallet}>Connect Wallet then refresh page to view count
@@ -184,7 +195,7 @@ export default function App() {
 
       <div className="waveContainer bio">
         <h3>Latest waves</h3>
-        {waves.length ? waves.slice(Math.max(waves.length - 5, 0)).map(wave => {
+        {waves.length ? waves.slice(Math.max(waves.length - 10, 0)).map(wave => {
           if (!wave.name) {
             return <><span title={wave.address}>👋 {wave.address.substr(0, 20) + "\u2026"} at {moment(wave.timestamp).format('MMMM Do YYYY, h:mm:ss a')} <b>Kudos!</b></span><hr /></>;
           } else {
