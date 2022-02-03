@@ -148,9 +148,11 @@ export default function App() {
   }
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     checkIfWalletIsConnected();
     initCount();
     getAllWaves();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (loading) {
