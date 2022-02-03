@@ -134,7 +134,7 @@ export default function App() {
     setCurrCount(count.toNumber())
     console.log(currCount)
     window.location.reload();
-   }
+  }
 
   const initCount = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -169,11 +169,11 @@ export default function App() {
         </div>
 
         <div className="bio">
-          Already {currCount} people waved!
+          Already {currCount || "(?)"} people waved!
         </div>
-        <button className="waveButton" onClick={wave}>
+        {currAccount ? <button className="waveButton" onClick={wave}>
           Wave at Me
-        </button>
+        </button> : null}
         {currAccount ? null : (
           <button className="wavebutton" onClick={connectWallet}>Connect Wallet then refresh page to view count
           </button>
@@ -184,13 +184,13 @@ export default function App() {
 
       <div className="waveContainer bio">
         <h3>Latest waves</h3>
-        {waves.slice(Math.max(waves.length - 5, 0)).map(wave => {
+        {waves.length ? waves.slice(Math.max(waves.length - 5, 0)).map(wave => {
           if (!wave.name) {
             return <><span title={wave.address}>👋 {wave.address.substr(0, 20) + "\u2026"} at {moment(wave.timestamp).format('MMMM Do YYYY, h:mm:ss a')} <b>Kudos!</b></span><hr /></>;
           } else {
             return <><span>👋 {wave.name} at {moment(wave.timestamp).format('MMMM Do YYYY, h:mm:ss a')} <b>Kudos!</b></span><hr /></>
           }
-        })}
+        }) : "Loading..."}
       </div>
       <div className="twitterContainer">
 
