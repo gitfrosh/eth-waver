@@ -124,15 +124,15 @@ export default function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner()
       const waveportalContract = new ethers.Contract(contractAddress, contractABI, signer);
-  
+
       let count = await waveportalContract.getTotalWaves()
       console.log("Retrieved total waves", count.toNumber())
-  
+
       const waveTxn = await waveportalContract.wave()
       console.log("Mining...", waveTxn.hash)
       await waveTxn.wait()
       console.log("Mined -- ", waveTxn.hash)
-  
+
       count = await waveportalContract.getTotalWaves()
       console.log("Retrieved total wave count...", count.toNumber())
       setCurrCount(count.toNumber())
@@ -143,7 +143,7 @@ export default function App() {
       console.log(error);
       setWaving(false)
 
-    } 
+    }
 
   }
 
@@ -178,22 +178,23 @@ export default function App() {
         <div className="header">
           👋 Hello there!
         </div>
+        <p><em>If you like, leave a wave!</em></p>
 
         <div className="bio">
-          Already {currCount || "(?)"} people waved!
+          {currCount ? <>Already {currCount} people waved!</> : null}
         </div>
         {currAccount ? <button disabled={waving} className="waveButton" onClick={wave}>
-         {waving ? "Waving ..." : "Wave at Me" } 
+          {waving ? "Waving ..." : "Wave at Me"}
         </button> : null}
         {currAccount ? null : (
-          <button className="wavebutton" onClick={connectWallet}>Connect Wallet then refresh page to view count
+          <button className="waveButton" onClick={connectWallet}>Connect Wallet & Reload
           </button>
         )}
         <div className="bio">
         </div>
       </div>
 
-      <div className="waveContainer bio">
+      {currCount ? <div className="waveContainer bio">
         <h3>Latest waves</h3>
         {waves.length ? waves.slice(Math.max(waves.length - 10, 0)).map(wave => {
           if (!wave.name) {
@@ -202,7 +203,7 @@ export default function App() {
             return <><span>👋 {wave.name} at {moment(wave.timestamp).format('MMMM Do YYYY, h:mm:ss a')} <b>Kudos!</b></span><hr /></>
           }
         }) : "Loading..."}
-      </div>
+      </div> : null}
       <div className="twitterContainer">
 
         <a href="https://twitter.com/frankanka?ref_src=twsrc%5Etfw" className="twitter-follow-button" data-show-count="false">Follow @frankanka</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
